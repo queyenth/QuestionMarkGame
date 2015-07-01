@@ -82,9 +82,9 @@ func get_event() {
 			window.Destroy()
 			os.Exit(0)
 		case *sdl.KeyDownEvent:
-			control.controller(int(e.Keysym.Sym), true)
+			control.UpdateKey(int(e.Keysym.Sym), true)
 		case *sdl.KeyUpEvent:
-			control.controller(int(e.Keysym.Sym), false)
+			control.UpdateKey(int(e.Keysym.Sym), false)
 		}
 	}
 }
@@ -355,7 +355,7 @@ type Control struct {
 	right_lock, esc_lock bool
 }
 
-func (c Control) controller(key int, state bool) {
+func (c Control) UpdateKey(key int, state bool) {
 	c.keys[key] = state
 }
 
