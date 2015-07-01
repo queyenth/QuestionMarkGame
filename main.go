@@ -1299,7 +1299,7 @@ func (m *Menu) draw() {
 		} else {
 			switch num {
 			case 0:
-				_, _, text.w, text.h, _ = text.play_y.Query()
+				_, _, text.w, text.h, _ = text.play.Query()
 				text.draw_texture(text.play, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 1:
 				_, _, text.w, text.h, _ = text.upgrade.Query()
