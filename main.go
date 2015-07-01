@@ -359,6 +359,22 @@ func (c Control) UpdateKey(key int, state bool) {
 	c.keys[key] = state
 }
 
+func (c Control) IsUpPressed() bool {
+	return c.keys[VK_UP] || c.keys[VK_W] || c.keys[VK_K]
+}
+
+func (c Control) IsDownPressed() bool {
+	return c.keys[VK_DOWN] || c.keys[VK_S] || c.keys[VK_J]
+}
+
+func (c Control) IsLeftPressed() bool {
+	return c.keys[VK_LEFT] || c.keys[VK_A] || c.keys[VK_H]
+}
+
+func (c Control) IsRightPressed() bool {
+	return c.keys[VK_RIGHT] || c.keys[VK_D] || c.keys[VK_L]
+}
+
 type Bg struct {
 	game_bg  *sdl.Texture
 	pause_bg *sdl.Texture
@@ -565,12 +581,12 @@ func (p *Plane) move() {
 	var steer_key1, steer_key2 bool
 	switch p.direction {
 	case left, right:
-		steer_key1 = control.keys[VK_UP] || control.keys[VK_W] || control.keys[VK_K]
-		steer_key2 = control.keys[VK_DOWN] || control.keys[VK_S] || control.keys[VK_J]
+		steer_key1 = control.IsUpPressed()
+		steer_key2 = control.IsDownPressed()
 		break
 	case up, down:
-		steer_key1 = control.keys[VK_LEFT] || control.keys[VK_A] || control.keys[VK_H]
-		steer_key2 = control.keys[VK_RIGHT] || control.keys[VK_D] || control.keys[VK_L]
+		steer_key1 = control.IsLeftPressed()
+		steer_key2 = control.IsRightPressed()
 		break
 	}
 	if game.mirror_mode {
@@ -1122,7 +1138,7 @@ func (p *Pause_menu) init() {
 }
 
 func (p *Pause_menu) events() {
-	if control.keys[VK_DOWN] || control.keys[VK_S] || control.keys[VK_J] {
+	if control.IsDownPressed() {
 		if !control.down_lock && p.active < 2 {
 			p.active++
 			control.down_lock = true
@@ -1130,7 +1146,7 @@ func (p *Pause_menu) events() {
 	} else {
 		control.down_lock = false
 	}
-	if control.keys[VK_UP] || control.keys[VK_W] || control.keys[VK_K] {
+	if control.IsUpPressed() {
 		if !control.up_lock && p.active > 0 {
 			p.active--
 			control.up_lock = true
@@ -1221,7 +1237,7 @@ func (m *Menu) events() {
 		m.sum += value
 	}
 	if m.sum <= 0 {
-		if control.keys[VK_DOWN] || control.keys[VK_S] || control.keys[VK_J] {
+		if control.IsDownPressed() {
 			if !control.down_lock && m.active < 4 {
 				m.last = m.active
 				m.active++
@@ -1230,7 +1246,7 @@ func (m *Menu) events() {
 		} else {
 			control.down_lock = false
 		}
-		if control.keys[VK_UP] || control.keys[VK_W] || control.keys[VK_K] {
+		if control.IsUpPressed() {
 			if !control.up_lock && m.active > 0 {
 				m.last = m.active
 				m.active--
@@ -1495,7 +1511,7 @@ func (o *Options) events() {
 	} else {
 		control.enter_lock = false
 	}
-	if control.keys[VK_DOWN] || control.keys[VK_S] || control.keys[VK_J] {
+	if control.IsDownPressed() {
 		if !control.down_lock {
 			control.down_lock = true
 			o.active = 2
@@ -1503,7 +1519,7 @@ func (o *Options) events() {
 	} else {
 		control.down_lock = false
 	}
-	if control.keys[VK_UP] || control.keys[VK_W] || control.keys[VK_K] {
+	if control.IsUpPressed() {
 		if !control.up_lock {
 			control.up_lock = true
 			o.active = 0
@@ -1511,7 +1527,7 @@ func (o *Options) events() {
 	} else {
 		control.up_lock = false
 	}
-	if control.keys[VK_LEFT] || control.keys[VK_A] || control.keys[VK_H] {
+	if control.IsLeftPressed() {
 		if !control.left_lock {
 			control.left_lock = true
 			switch o.active {
@@ -1526,7 +1542,7 @@ func (o *Options) events() {
 	} else {
 		control.left_lock = false
 	}
-	if control.keys[VK_RIGHT] || control.keys[VK_D] || control.keys[VK_L] {
+	if control.IsRightPressed() {
 		if !control.right_lock {
 			control.right_lock = true
 			switch o.active {
