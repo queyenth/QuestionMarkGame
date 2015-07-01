@@ -182,7 +182,7 @@ type Text struct {
 	hacked, tapetwo, mashur, oneonetwoseven,
 	your_money, money, one_more_life, one_k,
 	fifty, buy_r, buy_y, controls, min, max *sdl.Texture
-	w, h  int
+	w, h  int32
 	alpha byte
 }
 
@@ -237,14 +237,14 @@ func (t *Text) init() {
 
 func (t *Text) get_texture(text string, size int, color sdl.Color) *sdl.Texture {
 	font, _ := ttf.OpenFont("JoystixInk.ttf", size)
-	surf := font.RenderText_Blended(text, color)
+	surf, _ := font.RenderUTF8_Blended(text, color)
 	font_image, _ := renderer.CreateTextureFromSurface(surf)
 	font.Close()
 	return font_image
 }
 
 func (t *Text) draw_texture(texture *sdl.Texture, x, y int32, center_x, center_y bool) {
-	texture.Query(nil, nil, &t.w, &t.h)
+	_, _, t.w, t.h, _ = texture.Query()
 	if center_x {
 		x = int32(win_size/2 - t.w/2)
 	}
@@ -1197,15 +1197,15 @@ type Menu struct {
 	sum, width_sum int32
 	offset         [5]int32
 	width          [5]int32
-	text_width     [2]int
+	text_width     [2]int32
 }
 
 func (m *Menu) init() {
 	m.list = [5]string{"PLAY", "UPGRADE", "OPTIONS", "CREDITS", "EXIT"}
 	m.last = -1
 	m.offset = [5]int32{800, 750, 700, 650, 600}
-	text.your_best.Query(nil, nil, &m.text_width[0], nil)
-	text.highscore.Query(nil, nil, &m.text_width[1], nil)
+	_, _, m.text_width[0], _, _ = text.your_best.Query()
+	_, _, m.text_width[1], _, _ = text.highscore.Query()
 	m.width_sum = 0
 	game.slomo_flag = false
 	delay = 10
@@ -1281,37 +1281,37 @@ func (m *Menu) draw() {
 		if num == m.active {
 			switch num {
 			case 0:
-				text.play_y.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.play_y.Query()
 				text.draw_texture(text.play_y, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 1:
-				text.upgrade_y.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.upgrade_y.Query()
 				text.draw_texture(text.upgrade_y, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 2:
-				text.options_y.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.options_y.Query()
 				text.draw_texture(text.options_y, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 3:
-				text.credits_y.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.credits_y.Query()
 				text.draw_texture(text.credits_y, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 4:
-				text.exit_y.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.exit_y.Query()
 				text.draw_texture(text.exit_y, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			}
 		} else {
 			switch num {
 			case 0:
-				text.play_y.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.play_y.Query()
 				text.draw_texture(text.play, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 1:
-				text.upgrade.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.upgrade.Query()
 				text.draw_texture(text.upgrade, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 2:
-				text.options.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.options.Query()
 				text.draw_texture(text.options, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 3:
-				text.credits.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.credits.Query()
 				text.draw_texture(text.credits, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			case 4:
-				text.exit.Query(nil, nil, &text.w, &text.h)
+				_, _, text.w, text.h, _ = text.exit.Query()
 				text.draw_texture(text.exit, int32(790-text.w)+m.offset[num], int32(640+num*30), false, false)
 			}
 		}
@@ -1358,26 +1358,26 @@ func (c *Credits) events() {
 }
 
 type Upgrade struct {
-	width, width2         [2]int
+	width, width2         [2]int32
 	width_sum, width_sum2 int32
 	cost                  int
 }
 
 func (u *Upgrade) init() {
 	plane.life = plane.max_life
-	text.your_money.Query(nil, nil, &u.width[0], nil)
-	text.money.Query(nil, nil, &u.width[1], nil)
+	_, _, u.width[0], _, _ = text.your_money.Query()
+	_, _, u.width[1], _, _ = text.money.Query()
 	u.width_sum = 0
 	for _, value := range u.width {
 		u.width_sum += int32(value)
 	}
 	u.width_sum = 400 - u.width_sum/2
-	text.one_more_life.Query(nil, nil, &u.width2[0], nil)
+	_, _, u.width2[0], _, _ = text.one_more_life.Query()
 	switch plane.max_life {
 	case 1:
-		text.fifty.Query(nil, nil, &u.width2[1], nil)
+		_, _, u.width2[1], _, _ = text.fifty.Query()
 	case 2:
-		text.one_k.Query(nil, nil, &u.width2[1], nil)
+		_, _, u.width2[1], _, _ = text.one_k.Query()
 	}
 	u.width_sum2 = 0
 	for _, value := range u.width2 {
